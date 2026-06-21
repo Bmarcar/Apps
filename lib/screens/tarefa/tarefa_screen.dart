@@ -39,10 +39,34 @@ class _TasksScreenState extends State<TasksScreen> {
               final tarefa = tarefas[index];
 
               return Card(
-                child: ListTile(
-                  title: Text(tarefa.nome),
-                  subtitle: Text(tarefa.descricao ?? ''),
-                  trailing: Chip(label: Text('${tarefa.pontos ?? 0} pts')),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        tarefa.nome,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(tarefa.descricao ?? ''),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Chip(label: Text('${tarefa.pontos ?? 0} pts')),
+                          ElevatedButton(
+                            onPressed: () async {
+                              await _service.concluirTarefa(tarefa.id);
+                            },
+                            child: const Text('Concluir'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               );
             },

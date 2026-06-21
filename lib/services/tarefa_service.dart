@@ -13,4 +13,11 @@ class TarefaService {
 
     return response.map<Tarefa>((json) => Tarefa.fromJson(json)).toList();
   }
+
+  Future<void> concluirTarefa(int tarefaId) async {
+    await _supabase.from('execucoes_tarefa').insert({
+      'tarefa_id': tarefaId,
+      'data_execucao': DateTime.now().toIso8601String(),
+    });
+  }
 }
