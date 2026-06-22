@@ -6,7 +6,7 @@ class TarefaService {
 
   Future<List<Tarefa>> listarTarefas() async {
     final response = await _supabase
-        .from('vw_tarefas')
+        .from('tarefas')
         .select()
         .eq('ativa', true)
         .order('nome');
@@ -16,6 +16,7 @@ class TarefaService {
 
   Future<void> concluirTarefa(int tarefaId) async {
     await _supabase.from('execucoes_tarefa').insert({
+      'usuario_id': 1,
       'tarefa_id': tarefaId,
       'data_execucao': DateTime.now().toIso8601String(),
     });

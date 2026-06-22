@@ -59,7 +59,29 @@ class _TasksScreenState extends State<TasksScreen> {
                           Chip(label: Text('${tarefa.pontos ?? 0} pts')),
                           ElevatedButton(
                             onPressed: () async {
-                              await _service.concluirTarefa(tarefa.id);
+                              print('CLICOU NA TAREFA ${tarefa.id}');
+
+                              try {
+                                await _service.concluirTarefa(tarefa.id);
+
+                                print('GRAVOU COM SUCESSO');
+
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Tarefa registrada'),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                print('ERRO: $e');
+
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Erro: $e')),
+                                  );
+                                }
+                              }
                             },
                             child: const Text('Concluir'),
                           ),
