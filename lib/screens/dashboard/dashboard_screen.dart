@@ -9,7 +9,6 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-
   final RankingService _rankingService = RankingService();
 
   late Future<List<Map<String, dynamic>>> _ranking;
@@ -22,30 +21,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Jogo da Família'),
-      ),
+      appBar: AppBar(title: const Text('Jogo da Família')),
 
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _ranking,
 
         builder: (context, snapshot) {
-
-          if (snapshot.connectionState ==
-              ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                'Erro: ${snapshot.error}',
-              ),
-            );
+            return Center(child: Text('Erro: ${snapshot.error}'));
           }
 
           final ranking = snapshot.data ?? [];
@@ -54,21 +42,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
             itemCount: ranking.length,
 
             itemBuilder: (context, index) {
-
               final usuario = ranking[index];
 
               return ListTile(
-                leading: Text(
-                  '${index + 1}º'
-                ),
+                leading: Text('${index + 1}º'),
 
-                title: Text(
-                  usuario['nome'] ?? ''
-                ),
+                title: Text(usuario['nome'] ?? ''),
 
-                subtitle: Text(
-                  '${usuario['total_pontos']} pontos'
-                ),
+                subtitle: Text('${usuario['total_pontos']} pontos'),
               );
             },
           );

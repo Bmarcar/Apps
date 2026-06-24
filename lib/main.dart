@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'screens/tarefa/tarefa_screen.dart';
+import 'screens/home/home_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +19,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'Jogo da Família', home: const TasksScreen());
+    return MaterialApp(title: 'Jogo da Família', home: const HomeScreen());
   }
 }
