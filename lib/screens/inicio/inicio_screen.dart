@@ -54,7 +54,7 @@ class _InicioScreenState extends State<InicioScreen> {
     final progresso = xpMax == xpMin ? 1.0 : (xp - xpMin) / (xpMax - xpMin);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Jogo da Família')),
+      
       body: RefreshIndicator(
         onRefresh: carregarDados,
         child: ListView(

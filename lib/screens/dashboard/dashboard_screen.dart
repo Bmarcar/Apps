@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../services/ranking_service.dart';
 
+
+
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -22,7 +24,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Jogo da Família')),
+      appBar: AppBar(
+  title: const Text('Jogo da Família'),
+),
 
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _ranking,

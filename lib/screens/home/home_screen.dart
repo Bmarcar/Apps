@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:teste_flutter_2/screens/dashboard/dashboard_screen.dart';
-import 'package:teste_flutter_2/screens/tarefa/tarefa_screen.dart';
-import 'package:teste_flutter_2/screens/inicio/inicio_screen.dart';
+import '../dashboard/dashboard_screen.dart';
+import '/screens/tarefa/tarefa_screen.dart';
+import '/screens/inicio/inicio_screen.dart';
+import '/screens/administracao/admin_screen.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,6 +24,24 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+    title: const Text('Jogo da Família'),
+    actions: [
+      IconButton(
+        icon: const Icon(Icons.settings),
+        tooltip: 'Administração',
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const AdminScreen(),
+            ),
+          );
+        },
+      ),
+    ],
+  ),
+      
       body: _paginas[_paginaAtual],
 
       bottomNavigationBar: BottomNavigationBar(
