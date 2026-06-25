@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'categorias_screen.dart';
+import 'tarefas_admin_screen.dart';
 
 class AdminScreen extends StatelessWidget {
   const AdminScreen({super.key});
@@ -33,21 +34,19 @@ class AdminScreen extends StatelessWidget {
           ),
 
           _menuCard(
-            context,
-            icon: Icons.task,
-            titulo: 'Tarefas',
-            subtitulo: 'Criar e editar tarefas',
-            onTap: () {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'Tela em desenvolvimento',
-                  ),
-                ),
-              );
-            },
-          ),
+  context,
+  icon: Icons.task,
+  titulo: 'Tarefas',
+  subtitulo: 'Criar e editar tarefas',
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const TarefasAdminScreen(),
+      ),
+    );
+  },
+),
 
           _menuCard(
             context,

@@ -10,11 +10,12 @@ class CategoriaService {
         .select()
         .order('nome');
 
-    return response
-        .map<Categoria>(
-          (json) => Categoria.fromJson(json),
-        )
-        .toList();
+      print('RESPOSTA SUPABASE:');
+      print(response);
+
+      return (response as List)
+          .map((json) => Categoria.fromJson(json))
+          .toList();
   }
 
   Future<void> inserir(String nome) async {

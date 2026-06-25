@@ -25,7 +25,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-  title: const Text('Jogo da Família'),
+  title: const Text('Ranking'),
 ),
 
       body: FutureBuilder<List<Map<String, dynamic>>>(
