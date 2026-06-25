@@ -1,126 +1,118 @@
 class TarefaAdmin {
+  int? id;
 
-  final int? id;
+  String nome;
+  String? descricao;
 
-  final String nome;
+  // IDs gravados na tabela
+  int categoriaId;
+  int dificuldadeId;
 
-  final String? descricao;
+  String frequencia;
 
-  final int categoriaId;
+  int pontos;
+  int xp;
 
-  final String? categoria;
+  // Mantemos como String por enquanto.
+  // Depois refatoraremos para int tipoDestinatarioId.
+  String destinatarioTipo;
 
-  final int dificuldadeId;
+  int? perfilDestinoId;
+  int? usuarioDestinoId;
 
-  final String? dificuldade;
+  bool necessitaAprovacao;
+  bool ativa;
 
-  final String frequencia;
+  List<int> diasSemana;
 
-  final int pontos;
+  // Campos vindos da VIEW (somente leitura)
+  String? categoria;
+  String? dificuldade;
+  String? perfilDestino;
+  String? usuarioDestino;
 
-  final int xp;
-
-  final String destinatarioTipo;
-
-  final int? perfilDestinoId;
-
-  final String? perfilDestino;
-
-  final int? usuarioDestinoId;
-
-  final String? usuarioDestino;
-
-  final bool necessitaAprovacao;
-
-  final bool ativa;
-
-  final List<int> diasSemana;
-
-  const TarefaAdmin({
-
+  TarefaAdmin({
     this.id,
-
     required this.nome,
-
     this.descricao,
-
     required this.categoriaId,
-
-    this.categoria,
-
     required this.dificuldadeId,
-
-    this.dificuldade,
-
     required this.frequencia,
-
     required this.pontos,
-
     required this.xp,
-
     required this.destinatarioTipo,
-
     this.perfilDestinoId,
-
-    this.perfilDestino,
-
     this.usuarioDestinoId,
-
-    this.usuarioDestino,
-
     required this.necessitaAprovacao,
-
     required this.ativa,
-
     required this.diasSemana,
+    this.categoria,
+    this.dificuldade,
+    this.perfilDestino,
+    this.usuarioDestino,
   });
 
   factory TarefaAdmin.fromJson(Map<String, dynamic> json) {
-
     return TarefaAdmin(
-
       id: json['id'],
 
-      nome: json['nome'],
+      nome: json['nome'] ?? '',
 
       descricao: json['descricao'],
 
-      categoriaId: json['id_categoria'],
+      categoriaId: json['id_categoria'] ?? 0,
 
-      categoria: json['categoria'],
+      dificuldadeId: json['dificuldade_id'] ?? 0,
 
-      dificuldadeId: json['dificuldade_id'],
-
-      dificuldade: json['dificuldade'],
-
-      frequencia: json['frequencia'],
+      frequencia: json['frequencia'] ?? 'DIARIA',
 
       pontos: json['pontos'] ?? 0,
 
       xp: json['xp'] ?? 0,
 
-      destinatarioTipo:
-          json['destinatario_tipo'] ?? 'TODOS',
+      // Temporário até fazermos a refatoração
+      destinatarioTipo: (json['tipo_destinatario_id'] ?? 1).toString(),
 
-      perfilDestinoId:
-          json['perfil_destino_id'],
+      perfilDestinoId: json['perfil_familia_id'],
 
-      perfilDestino:
-          json['perfil_destino'],
+      usuarioDestinoId: json['usuario_id'],
 
-      usuarioDestinoId:
-          json['usuario_destino_id'],
+      necessitaAprovacao: json['necessita_aprovacao'] ?? false,
 
-      usuarioDestino:
-          json['usuario_destino'],
+      ativa: json['ativa'] ?? true,
 
-      necessitaAprovacao:
-          json['necessita_aprovacao'] ?? false,
+      diasSemana: [],
 
-      ativa:
-          json['ativa'] ?? true,
+      categoria: json['categoria'],
 
-      diasSemana: const [],
+      dificuldade: json['dificuldade'],
+
+      perfilDestino: json['perfil_destino'],
+
+      usuarioDestino: json['usuario_destino'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'nome': nome,
+      'descricao': descricao,
+      'id_categoria': categoriaId,
+      'dificuldade_id': dificuldadeId,
+      'frequencia': frequencia,
+      'pontos': pontos,
+      'xp': xp,
+
+      // Temporário
+      'tipo_destinatario_id': int.tryParse(destinatarioTipo) ?? 1,
+
+      'perfil_familia_id': perfilDestinoId,
+
+      'usuario_id': usuarioDestinoId,
+
+      'necessita_aprovacao': necessitaAprovacao,
+
+      'ativa': ativa,
+    };
   }
 }
