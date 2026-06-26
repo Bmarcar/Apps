@@ -64,6 +64,18 @@ class _TarefaFormScreenState extends State<TarefaFormScreen> {
 
   List<Usuario> usuarios = [];
 
+  String formatarDiasSemana(List<int> dias) {
+    const nomes = {
+      1: "Seg",
+      2: "Ter",
+      3: "Qua",
+      4: "Qui",
+      5: "Sex",
+      6: "Sáb",
+      7: "Dom",
+    };
+      return dias.map((d) => nomes[d]!).join(" • ");
+  }
   //------------------------------------------------------
   // SELEÇÕES
   //------------------------------------------------------
@@ -111,61 +123,93 @@ class _TarefaFormScreenState extends State<TarefaFormScreen> {
   // CARREGAR DADOS
   //------------------------------------------------------
 
-  Future<void> carregarDados() async {
+ Future<void> carregarDados() async {
+  try {
+    print("========== INÍCIO ==========");
+
     categorias = await _categoriaService.listar();
+    print("Categorias: ${categorias.length}");
 
     dificuldades = await _dificuldadeService.listar();
+    print("Dificuldades: ${dificuldades.length}");
 
     perfis = await _perfilService.listar();
+    print("Perfis: ${perfis.length}");
 
     usuarios = await _usuarioService.listar();
+    print("Usuários: ${usuarios.length}");
 
     if (widget.tarefa != null) {
       final tarefa = widget.tarefa!;
 
+      print("Nome: ${tarefa.nome}");
+      print("CategoriaId: ${tarefa.categoriaId}");
+      print("DificuldadeId: ${tarefa.dificuldadeId}");
+      print("DestinatárioTipo: ${tarefa.destinatarioTipo}");
+      print("PerfilDestinoId: ${tarefa.perfilDestinoId}");
+      print("UsuarioDestinoId: ${tarefa.usuarioDestinoId}");
+
       _nomeController.text = tarefa.nome;
+      print("Nome OK");
 
       _descricaoController.text = tarefa.descricao ?? '';
+      print("Descrição OK");
 
       frequencia = tarefa.frequencia;
-
       pontos = tarefa.pontos;
-
       xp = tarefa.xp;
-
       ativa = tarefa.ativa;
-
       necessitaAprovacao = tarefa.necessitaAprovacao;
 
-      categoriaSelecionada = categorias.firstWhere(
-        (e) => e.id == tarefa.categoriaId,
-      );
+      print("Procurando categoria...");
+      categoriaSelecionada =
+          categorias.firstWhere((e) => e.id == tarefa.categoriaId);
+      print("Categoria OK");
 
-      dificuldadeSelecionada = dificuldades.firstWhere(
-        (e) => e.id == tarefa.dificuldadeId,
-      );
+      print("Procurando dificuldade...");
+      dificuldadeSelecionada =
+          dificuldades.firstWhere((e) => e.id == tarefa.dificuldadeId);
+      print("Dificuldade OK");
 
-      tipoDestinatario = int.tryParse(tarefa.destinatarioTipo) ?? 1;
+      tipoDestinatario = tarefa.tipoDestinatarioId;
+      print("Tipo destinatário OK");
 
       if (tarefa.perfilDestinoId != null) {
-        perfilSelecionado = perfis.firstWhere(
-          (e) => e.id == tarefa.perfilDestinoId,
-        );
+        print("Procurando perfil...");
+        perfilSelecionado =
+            perfis.firstWhere((e) => e.id == tarefa.perfilDestinoId);
+        print("Perfil OK");
       }
 
       if (tarefa.usuarioDestinoId != null) {
-        usuarioSelecionado = usuarios.firstWhere(
-          (e) => e.id == tarefa.destinatarioTipo,
-        );
+        print("Procurando usuário...");
+        usuarioSelecionado =
+            usuarios.firstWhere((e) => e.id == tarefa.usuarioDestinoId);
+        print("Usuário OK");
       }
 
-      diasSemana = List.from(tarefa.diasSemana);
+      print("Carregando dias da semana...");
+
+      diasSemana = await _tarefaService.listarDiasSemana(tarefa.id!);
+
+      print("Dias da semana: $diasSemana");
+      
+      print("Dias semana OK");
     }
+
+    print("Finalizando...");
 
     setState(() {
       carregando = false;
     });
+
+    print("========== FIM ==========");
+  } catch (e, s) {
+    print("========== ERRO ==========");
+    print(e);
+    print(s);
   }
+}
 
   //------------------------------------------------------
 
@@ -253,13 +297,13 @@ class _TarefaFormScreenState extends State<TarefaFormScreen> {
                 });
               },
 
-              onPerfilChanged: (Perfil? perfil) {
+              onPerfilChanged: (perfil) {
                 setState(() {
                   perfilSelecionado = perfil;
                 });
               },
 
-              onUsuarioChanged: (Usuario? usuario) {
+              onUsuarioChanged: (usuario) {
                 setState(() {
                   usuarioSelecionado = usuario;
                 });
@@ -371,27 +415,33 @@ class _TarefaFormScreenState extends State<TarefaFormScreen> {
                     const SizedBox(height: 15),
 
                     Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        if (categoriaSelecionada != null)
-                          Chip(
-                            avatar: const Icon(Icons.category),
-                            label: Text(categoriaSelecionada!.nome),
-                          ),
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            if (categoriaSelecionada != null)
+                              Chip(
+                                avatar: const Icon(Icons.category),
+                                label: Text(categoriaSelecionada!.nome),
+                              ),
 
-                        if (dificuldadeSelecionada != null)
-                          Chip(
-                            avatar: const Icon(Icons.star),
-                            label: Text(dificuldadeSelecionada!.nome),
-                          ),
+                            if (dificuldadeSelecionada != null)
+                              Chip(
+                                avatar: const Icon(Icons.star),
+                                label: Text(dificuldadeSelecionada!.nome),
+                              ),
 
-                        Chip(
-                          avatar: const Icon(Icons.repeat),
-                          label: Text(frequencia),
+                            Chip(
+                              avatar: const Icon(Icons.repeat),
+                              label: Text(frequencia),
+                            ),
+
+                            if (frequencia == "SEMANAL" && diasSemana.isNotEmpty)
+                              Chip(
+                                avatar: const Icon(Icons.calendar_today),
+                                label: Text(formatarDiasSemana(diasSemana)),
+                              ),
+                          ],
                         ),
-                      ],
-                    ),
 
                     const SizedBox(height: 15),
 
@@ -466,14 +516,72 @@ class _TarefaFormScreenState extends State<TarefaFormScreen> {
   }
 
   Future<void> _salvar() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+  if (!_formKey.currentState!.validate()) {
+    return;
+  }
+
+  final dados = {
+    "nome": _nomeController.text.trim(),
+    "descricao": _descricaoController.text.trim(),
+
+    "id_categoria": categoriaSelecionada?.id,
+
+    "frequencia": frequencia,
+
+    "dificuldade_id": dificuldadeSelecionada?.id,
+
+    "pontos": pontos,
+    "xp": xp,
+
+    "tipo_destinatario_id": tipoDestinatario,
+
+    "perfil_familia_id": perfilSelecionado?.id,
+
+    "usuario_id": usuarioSelecionado?.id,
+
+    "necessita_aprovacao": necessitaAprovacao,
+
+    "ativa": ativa,
+  };
+
+  try {
+
+    if (widget.tarefa == null) {
+
+  final id = await _tarefaService.inserir(dados);
+
+  await _tarefaService.salvarDiasSemana(
+    id,
+    diasSemana,
+  );
+
+} else {
+
+  await _tarefaService.atualizar(
+    widget.tarefa!.id!,
+    dados,
+  );
+
+  await _tarefaService.salvarDiasSemana(
+    widget.tarefa!.id!,
+    diasSemana,
+  );
+
+}
+
+    if (!mounted) return;
+
+    Navigator.pop(context, true);
+
+  } catch (e) {
+
+    if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Salvar será implementado na próxima etapa.'),
+      SnackBar(
+        content: Text("Erro ao salvar: $e"),
       ),
     );
   }
+}
 }

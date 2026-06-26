@@ -120,64 +120,137 @@ class _TarefasAdminScreenState extends State<TarefasAdminScreen> {
 
                             label: Text(tarefa.frequencia),
                           ),
+                          
+                          if (tarefa.frequencia == "SEMANAL" &&
+                              tarefa.diasSemana != null &&
+                              tarefa.diasSemana!.isNotEmpty)
+                            Chip(
+                              avatar: const Icon(Icons.calendar_today),
+                              label: Text(tarefa.diasSemana!),
+                            ),
+                    
                         ],
                       ),
 
                       const SizedBox(height: 10),
 
                       Text(
-                        tarefa.destinatarioTipo == 'TODOS'
+                        tarefa.tipoDestinatarioId == 1
                             ? '👨 Toda a família'
-                            : tarefa.destinatarioTipo == 'PERFIL'
-                            ? '👦 ${tarefa.perfilDestinoId}'
-                            : '👤 ${tarefa.usuarioDestinoId}',
+                            : tarefa.tipoDestinatarioId == 2
+                            ? '👦 ${tarefa.perfilDestino?? "Sem Atribuição"}'
+                            : '👤 ${tarefa.usuarioDestino?? "Sem Atribuição"}',
                       ),
 
                       const SizedBox(height: 10),
 
-                      Row(
-                        children: [
-                          Chip(
-                            avatar: const Icon(Icons.star),
+                      Column(
+  children: [
+    Row(
+      children: [
+        Chip(
+          avatar: const Icon(Icons.star),
+          label: Text('${tarefa.pontos} pts'),
+        ),
 
-                            label: Text('${tarefa.pontos} pts'),
-                          ),
+        const SizedBox(width: 8),
 
-                          const SizedBox(width: 8),
+        Chip(
+          avatar: const Icon(Icons.bolt),
+          label: Text('${tarefa.xp} XP'),
+        ),
+      ],
+    ),
 
-                          Chip(
-                            avatar: const Icon(Icons.bolt),
+    const SizedBox(height: 8),
 
-                            label: Text('${tarefa.xp} XP'),
-                          ),
+    Align(
+      alignment: Alignment.centerRight,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => TarefaFormScreen(
+                    tarefa: tarefa,
+                  ),
+                ),
+              );
 
-                          const Spacer(),
+              setState(() {
+                carregar();
+              });
+            },
+            icon: const Icon(Icons.edit),
+          ),
 
-                          IconButton(
-                            onPressed: () async {
-                              await Navigator.push(
-                                context,
+          IconButton(
+  icon: const Icon(
+    Icons.delete,
+    color: Colors.red,
+  ),
+  onPressed: () async {
 
-                                MaterialPageRoute(
-                                  builder: (_) => const TarefaFormScreen(),
-                                ),
-                              );
+    final confirmar = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Excluir tarefa"),
+        content: const Text(
+          "Deseja realmente excluir esta tarefa?",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("Cancelar"),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text("Excluir"),
+          ),
+        ],
+      ),
+    );
 
-                              setState(() {
-                                carregar();
-                              });
-                            },
+    if (confirmar != true) return;
 
-                            icon: const Icon(Icons.edit),
-                          ),
+    try {
 
-                          IconButton(
-                            onPressed: () {},
+      await _service.excluir(tarefa.id!);
 
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                          ),
-                        ],
-                      ),
+      setState(() {
+        carregar();
+      });
+
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Tarefa excluída com sucesso."),
+        ),
+      );
+
+    } catch (e) {
+
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Erro ao excluir: $e"),
+        ),
+      );
+
+    }
+
+  },
+),
+        ],
+      ),
+    ),
+  ],
+),
                     ],
                   ),
                 ),

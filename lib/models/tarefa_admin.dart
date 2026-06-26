@@ -15,7 +15,7 @@ class TarefaAdmin {
 
   // Mantemos como String por enquanto.
   // Depois refatoraremos para int tipoDestinatarioId.
-  String destinatarioTipo;
+  int tipoDestinatarioId;
 
   int? perfilDestinoId;
   int? usuarioDestinoId;
@@ -23,34 +23,41 @@ class TarefaAdmin {
   bool necessitaAprovacao;
   bool ativa;
 
-  List<int> diasSemana;
+  String? diasSemana;
 
   // Campos vindos da VIEW (somente leitura)
   String? categoria;
   String? dificuldade;
   String? perfilDestino;
   String? usuarioDestino;
+  String? destinatarioTipo;
 
   TarefaAdmin({
-    this.id,
-    required this.nome,
-    this.descricao,
-    required this.categoriaId,
-    required this.dificuldadeId,
-    required this.frequencia,
-    required this.pontos,
-    required this.xp,
-    required this.destinatarioTipo,
-    this.perfilDestinoId,
-    this.usuarioDestinoId,
-    required this.necessitaAprovacao,
-    required this.ativa,
-    required this.diasSemana,
-    this.categoria,
-    this.dificuldade,
-    this.perfilDestino,
-    this.usuarioDestino,
-  });
+  this.id,
+  required this.nome,
+  this.descricao,
+  required this.categoriaId,
+  required this.dificuldadeId,
+  required this.frequencia,
+  required this.pontos,
+  required this.xp,
+
+  required this.tipoDestinatarioId,
+  this.destinatarioTipo,
+
+  this.perfilDestinoId,
+  this.usuarioDestinoId,
+
+  required this.necessitaAprovacao,
+  required this.ativa,
+
+  required this.diasSemana,
+
+  this.categoria,
+  this.dificuldade,
+  this.perfilDestino,
+  this.usuarioDestino,
+});
 
   factory TarefaAdmin.fromJson(Map<String, dynamic> json) {
     return TarefaAdmin(
@@ -70,8 +77,12 @@ class TarefaAdmin {
 
       xp: json['xp'] ?? 0,
 
-      // Temporário até fazermos a refatoração
-      destinatarioTipo: (json['tipo_destinatario_id'] ?? 1).toString(),
+       // Temporário até fazermos a refatoração
+      tipoDestinatarioId: json['tipo_destinatario_id'] ?? 1,
+
+      destinatarioTipo: json['destinatario_tipo']
+      
+      .toString(),
 
       perfilDestinoId: json['perfil_familia_id'],
 
@@ -81,7 +92,7 @@ class TarefaAdmin {
 
       ativa: json['ativa'] ?? true,
 
-      diasSemana: [],
+      diasSemana: json['dias_semana'],
 
       categoria: json['categoria'],
 
@@ -90,6 +101,7 @@ class TarefaAdmin {
       perfilDestino: json['perfil_destino'],
 
       usuarioDestino: json['usuario_destino'],
+      
     );
   }
 
@@ -103,9 +115,10 @@ class TarefaAdmin {
       'pontos': pontos,
       'xp': xp,
 
-      // Temporário
-      'tipo_destinatario_id': int.tryParse(destinatarioTipo) ?? 1,
+      'tipo_destinatario_id': tipoDestinatarioId,
 
+      // Temporário
+      
       'perfil_familia_id': perfilDestinoId,
 
       'usuario_id': usuarioDestinoId,
