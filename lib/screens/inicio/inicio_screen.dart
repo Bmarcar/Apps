@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '/services/senssion_service.dart';
 
 class InicioScreen extends StatefulWidget {
   const InicioScreen({super.key});
@@ -22,10 +23,12 @@ class _InicioScreenState extends State<InicioScreen> {
     try {
       // final usuarioId = Supabase.instance.client.auth.currentUser!.id;
 
+      final usuarioId = SessionService.instance.usuarioId;
+
       final resultado = await Supabase.instance.client
           .from('vw_dashboard_usuario')
           .select()
-          .eq('id', 1)
+          .eq('id', usuarioId)
           .single();
 
       setState(() {
@@ -54,7 +57,6 @@ class _InicioScreenState extends State<InicioScreen> {
     final progresso = xpMax == xpMin ? 1.0 : (xp - xpMin) / (xpMax - xpMin);
 
     return Scaffold(
-      
       body: RefreshIndicator(
         onRefresh: carregarDados,
         child: ListView(
