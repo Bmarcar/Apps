@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'screens/inicio/splash_screen.dart';
 import 'theme/app_theme.dart';
 
@@ -8,8 +9,7 @@ Future<void> main() async {
 
   await Supabase.initialize(
     url: 'https://caxzwnofigedspzrgmrf.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNheHp3bm9maWdlZHNwenJnbXJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1OTIwMjcsImV4cCI6MjA5NzE2ODAyN30.UYtopzFznU57B4nHSxgGWK9DsQrXZIXQ64rli6FHlvI',
+    anonKey: 'sb_publishable_mbJyLd-z7jemw4DeuEykaQ_NHCGSzpl',
   );
 
   runApp(const MyApp());

@@ -65,7 +65,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("$_saudacao, ${nome.split(' ').first}"),
+        centerTitle: false,
+        titleSpacing: 10,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset("assets/images/logo.png", width: 36, height: 36),
+            const SizedBox(width: 10),
+            const Text(
+              "Florida",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
 
         actions: [
           if (administrador)

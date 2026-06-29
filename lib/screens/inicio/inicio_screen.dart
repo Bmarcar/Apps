@@ -44,6 +44,20 @@ class _InicioScreenState extends State<InicioScreen> {
     }
   }
 
+  String get _saudacao {
+    final hora = DateTime.now().hour;
+
+    if (hora < 12) {
+      return "Bom dia";
+    }
+
+    if (hora < 18) {
+      return "Boa tarde";
+    }
+
+    return "Boa noite";
+  }
+
   @override
   Widget build(BuildContext context) {
     if (carregando) {
@@ -63,7 +77,7 @@ class _InicioScreenState extends State<InicioScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             Text(
-              'Olá, ${(dados?['nome'] ?? 'Jogador').split(' ')[0]}!',
+              '$_saudacao, ${(dados?['nome'] ?? 'Jogador').split(' ')[0]}! 👋',
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
 

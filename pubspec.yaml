@@ -36,6 +36,15 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_riverpod: ^2.6.1
   supabase_flutter: ^2.6.0
+  package_info_plus: ^8.0.2
+  dio: ^5.9.0
+ # open_filex: ^4.7.0
+  permission_handler: ^12.0.1
+  path_provider: ^2.1.5
+  #app_installer_plus: ^1.2.0
+  #apk_sideload: ^0.0.2
+  flutter_android_package_installer: ^0.0.3+2
+ 
 
 dev_dependencies:
   flutter_test:

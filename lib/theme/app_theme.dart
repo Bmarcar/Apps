@@ -4,13 +4,13 @@ class AppTheme {
   AppTheme._();
 
   // Cores principais
-  static const Color primary = Color(0xFF673AB7);
-  static const Color primaryDark = Color(0xFF512DA8);
-  static const Color primaryLight = Color(0xFFEDE7F6);
+  static const Color primary = Color(0xFF42BDEB);
+  static const Color primaryDark = Color(0xFF269CCF);
+  static const Color primaryLight = Color(0xFF9EE7FA);
 
-  static const Color secondary = Color(0xFFFFC107);
+  static const Color secondary = Color.fromARGB(255, 235, 232, 232);
 
-  static const Color background = Color(0xFFF5F5F5);
+  static const Color background = Color.fromARGB(255, 235, 232, 232);
 
   static const Color card = Colors.white;
 
@@ -18,9 +18,11 @@ class AppTheme {
 
   static const Color error = Color(0xFFE53935);
 
-  static const Color textPrimary = Color(0xFF212121);
+  static const Color textPrimary = Color(0xFF2D3748);
 
   static const Color textSecondary = Color(0xFF757575);
+
+  static const Color floridaAccent = Color(0xFFFF7B3A);
 
   static ThemeData get lightTheme {
     return ThemeData(

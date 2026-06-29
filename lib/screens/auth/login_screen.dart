@@ -70,7 +70,9 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           Image.asset("assets/images/splash.png", fit: BoxFit.cover),
 
-          Container(color: Colors.black.withOpacity(.55)),
+          Container(
+            color: const Color.fromARGB(255, 192, 192, 192).withOpacity(.55),
+          ),
 
           SafeArea(
             child: Center(
@@ -94,16 +96,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisSize: MainAxisSize.min,
 
                         children: [
-                          const Icon(
-                            Icons.home,
-                            size: 70,
-                            color: Colors.deepPurple,
+                          CircleAvatar(
+                            radius: 45,
+                            backgroundColor: Colors.transparent,
+                            backgroundImage: AssetImage(
+                              "assets/images/logo.png",
+                            ),
                           ),
 
                           const SizedBox(height: 15),
 
                           const Text(
-                            "Jogo da Família",
+                            "Florida",
                             style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
@@ -113,7 +117,19 @@ class _LoginScreenState extends State<LoginScreen> {
                           const SizedBox(height: 5),
 
                           const Text(
+                            "O Jogo da Família",
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.indigoAccent,
+                            ),
+                          ),
+
+                          const SizedBox(height: 5),
+
+                          const Text(
                             "Transforme tarefas em diversão",
+                            textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.grey),
                           ),
 
