@@ -9,6 +9,7 @@ import '../home/home_screen.dart';
 import '../../models/app_version.dart';
 import '../../services/update_service.dart';
 import '../../manegers/update_maneger.dart';
+import '../../widgets/update_card.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -117,69 +118,18 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _temAtualizacao
-          ? _buildUpdate()
+          ? UpdateCard(
+              version: _novaVersao!,
+              baixando: _baixando,
+              progresso: _progresso,
+              onAtualizar: _baixarAtualizacao,
+            )
           : const SizedBox.expand(
               child: Image(
                 image: AssetImage("assets/images/splash.png"),
                 fit: BoxFit.cover,
               ),
             ),
-    );
-  }
-
-  Widget _buildUpdate() {
-    return Center(
-      child: Card(
-        margin: const EdgeInsets.all(24),
-        elevation: 8,
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CircleAvatar(
-                radius: 45,
-                backgroundImage: AssetImage("assets/images/logo.png"),
-              ),
-
-              const SizedBox(height: 20),
-
-              const Text(
-                "Florida",
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              ),
-
-              const SizedBox(height: 12),
-
-              Text(
-                "Versão ${_novaVersao?.version}",
-                style: const TextStyle(fontSize: 18),
-              ),
-
-              const SizedBox(height: 20),
-
-              Text(_novaVersao?.description ?? "", textAlign: TextAlign.center),
-
-              const SizedBox(height: 25),
-
-              if (_baixando) LinearProgressIndicator(value: _progresso),
-
-              if (_baixando)
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Text("${(_progresso * 100).toStringAsFixed(0)} %"),
-                ),
-
-              if (!_baixando)
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.download),
-                  label: const Text("Atualizar agora"),
-                  onPressed: _baixarAtualizacao,
-                ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
