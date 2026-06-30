@@ -44,7 +44,8 @@ dependencies:
   #app_installer_plus: ^1.2.0
   #apk_sideload: ^0.0.2
   #flutter_android_package_installer: ^0.0.3+2
-  apk_sideload: ^0.0.1
+  #apk_sideload: ^0.0.1
+  #flutter_app_installer: ^2.0.0
  
 
 dev_dependencies:
