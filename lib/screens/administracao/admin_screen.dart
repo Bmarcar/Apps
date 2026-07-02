@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'categorias_screen.dart';
 import 'tarefas_admin_screen.dart';
+import 'package:teste_flutter_2/screens/recompensas/recompensa_list_screen.dart';
 
 class AdminScreen extends StatelessWidget {
   const AdminScreen({super.key});
@@ -49,12 +50,19 @@ class AdminScreen extends StatelessWidget {
 ),
 
           _menuCard(
-            context,
-            icon: Icons.card_giftcard,
-            titulo: 'Recompensas',
-            subtitulo: 'Loja e recompensas',
-            onTap: () {},
-          ),
+                    context,
+                    icon: Icons.card_giftcard,
+                    titulo: 'Recompensas',
+                    subtitulo: 'Loja e recompensas',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const RecompensaListScreen(),
+                        ),
+                      );
+                    },
+                  ),
 
           _menuCard(
             context,

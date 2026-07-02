@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../models/perfil.dart';
-import '../../../models/usuario.dart';
+import '../../../../models/perfil.dart';
+import '../../../../models/usuario.dart';
 
 class DestinatarioCard extends StatelessWidget {
   final int tipoDestinatario;

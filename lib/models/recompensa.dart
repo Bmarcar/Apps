@@ -60,7 +60,7 @@ class Recompensa {
 
   Map<String, dynamic> toMap() {
     return {
-      "id": id,
+      if (id != null) 'id': id,
       "nome": nome,
       "descricao": descricao,
       "pontos": pontos,

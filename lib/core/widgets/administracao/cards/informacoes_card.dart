@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../models/categoria.dart';
-import '../../../models/dificuldade.dart';
+import '../../../../models/categoria.dart';
+import '../../../../models/dificuldade.dart';
 
 class InformacoesCard extends StatelessWidget {
   final TextEditingController nomeController;

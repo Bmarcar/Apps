@@ -12,11 +12,11 @@ import '../../services/perfil_service.dart';
 import '../../services/usuario_service.dart';
 import '../../services/tarefa_admin_service.dart';
 
-import '../../widgets/administracao/cards/informacoes_card.dart';
-import '../../widgets/administracao/cards/destinatario_card.dart';
-import '../../widgets/administracao/cards/agenda_card.dart';
-import '../../widgets/administracao/cards/pontuacao_card.dart';
-import '../../widgets/administracao/cards/configuracoes_card.dart';
+import '../../core/widgets/administracao/cards/informacoes_card.dart';
+import '../../core/widgets/administracao/cards/destinatario_card.dart';
+import '../../core/widgets/administracao/cards/agenda_card.dart';
+import '../../core/widgets/administracao/cards/pontuacao_card.dart';
+import '../../core/widgets/administracao/cards/configuracoes_card.dart';
 
 class TarefaFormScreen extends StatefulWidget {
   final TarefaAdmin? tarefa;

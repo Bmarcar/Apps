@@ -9,7 +9,7 @@ import '../home/home_screen.dart';
 import '../../models/app_version.dart';
 import '../../services/update_service.dart';
 import '../../manegers/update_maneger.dart';
-import '../../widgets/update_card.dart';
+import '../../core/widgets/common/update_card.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

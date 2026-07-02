@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/app_version.dart';
+import '../../../models/app_version.dart';
 
 class UpdateCard extends StatelessWidget {
   final AppVersion version;

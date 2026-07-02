@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/administracao/admin/admin_page_scaffold.dart';
+import '../../core/widgets/administracao/fields/admin_search_field.dart';
 import '../../models/recompensa.dart';
 import '../../repositories/recompensa_repository.dart';
 import 'recompensa_form_screen.dart';
@@ -17,12 +19,12 @@ class _RecompensaListScreenState
 
   final _repository = RecompensaRepository();
 
+  final _pesquisaController = TextEditingController();
+
   List<Recompensa> _lista = [];
   List<Recompensa> _filtrada = [];
 
   bool _loading = true;
-
-  final _pesquisaController = TextEditingController();
 
   @override
   void initState() {
@@ -30,10 +32,21 @@ class _RecompensaListScreenState
     carregar();
   }
 
+  @override
+  void dispose() {
+    _pesquisaController.dispose();
+    super.dispose();
+  }
+
   Future<void> carregar() async {
-    setState(() => _loading = true);
+
+    setState(() {
+      _loading = true;
+    });
 
     final dados = await _repository.listar();
+
+    if (!mounted) return;
 
     setState(() {
       _lista = dados;
@@ -66,10 +79,10 @@ class _RecompensaListScreenState
 
       builder: (_) => AlertDialog(
 
-        title: const Text("Excluir"),
+        title: const Text("Excluir recompensa"),
 
         content: Text(
-          "Deseja excluir '${recompensa.nome}'?"
+          "Deseja realmente excluir '${recompensa.nome}'?",
         ),
 
         actions: [
@@ -83,14 +96,14 @@ class _RecompensaListScreenState
 
           ),
 
-          ElevatedButton(
+          FilledButton(
 
             onPressed: () =>
                 Navigator.pop(context, true),
 
             child: const Text("Excluir"),
 
-          )
+          ),
 
         ],
 
@@ -102,67 +115,94 @@ class _RecompensaListScreenState
 
     await _repository.excluir(recompensa.id!);
 
-    carregar();
+    await carregar();
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+
+      const SnackBar(
+
+        content: Text(
+          "Recompensa excluída com sucesso!",
+        ),
+
+      ),
+
+    );
+
+  }
+
+  Future<void> abrirFormulario({
+    Recompensa? recompensa,
+  }) async {
+
+    final alterou = await Navigator.push<bool>(
+
+      context,
+
+      MaterialPageRoute(
+
+        builder: (_) => RecompensaFormScreen(
+          recompensa: recompensa,
+        ),
+
+      ),
+
+    );
+
+    if (alterou == true) {
+
+      await carregar();
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+
+        SnackBar(
+
+          content: Text(
+
+            recompensa == null
+                ? "Recompensa cadastrada com sucesso!"
+                : "Recompensa atualizada com sucesso!",
+
+          ),
+
+        ),
+
+      );
+
+    }
 
   }
 
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    return AdminPageScaffold(
 
-      appBar: AppBar(
-        title: const Text("Recompensas"),
-      ),
+      title: "Recompensas",
 
       floatingActionButton: FloatingActionButton(
 
+        onPressed: () => abrirFormulario(),
+
         child: const Icon(Icons.add),
-
-        onPressed: () async {
-
-          await Navigator.push(
-
-            context,
-
-            MaterialPageRoute(
-
-              builder: (_) =>
-                  const RecompensaFormScreen(),
-
-            ),
-
-          );
-
-          carregar();
-
-        },
 
       ),
 
-      body: Column(
+      child: Column(
 
         children: [
 
-          Padding(
+          AdminSearchField(
 
-            padding: const EdgeInsets.all(16),
+            controller: _pesquisaController,
 
-            child: TextField(
+            hint: "Pesquisar recompensa...",
 
-              controller: _pesquisaController,
-
-              decoration: const InputDecoration(
-
-                hintText: "Pesquisar",
-
-                prefixIcon: Icon(Icons.search),
-
-              ),
-
-              onChanged: pesquisar,
-
-            ),
+            onChanged: pesquisar,
 
           ),
 
@@ -174,101 +214,181 @@ class _RecompensaListScreenState
                     child: CircularProgressIndicator(),
                   )
 
-                : ListView.builder(
+                : _filtrada.isEmpty
 
-                    itemCount: _filtrada.length,
+                    ? const Center(
 
-                    itemBuilder: (_, index) {
-
-                      final recompensa =
-                          _filtrada[index];
-
-                      return Card(
-
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 6,
+                        child: Text(
+                          "Nenhuma recompensa encontrada.",
                         ),
 
-                        child: ListTile(
+                      )
 
-                          leading: const CircleAvatar(
+                    : ListView.builder(
 
-                            child: Icon(
-                              Icons.card_giftcard,
+                        itemCount: _filtrada.length,
+
+                        itemBuilder: (_, index) {
+
+                          final recompensa = _filtrada[index];
+
+                          return Card(
+
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 6,
                             ),
 
-                          ),
+                            elevation: 2,
 
-                          title: Text(
-                            recompensa.nome,
-                          ),
+                            child: ListTile(
 
-                          subtitle: Text(
+                              contentPadding:
+                                  const EdgeInsets.all(12),
 
-                            "${recompensa.pontos} pontos",
+                              leading: CircleAvatar(
 
-                          ),
+                                radius: 26,
 
-                          trailing: Row(
-
-                            mainAxisSize: MainAxisSize.min,
-
-                            children: [
-
-                              IconButton(
-
-                                icon: const Icon(
-                                  Icons.edit,
+                                child: const Icon(
+                                  Icons.card_giftcard,
                                 ),
-
-                                onPressed: () async {
-
-                                  await Navigator.push(
-
-                                    context,
-
-                                    MaterialPageRoute(
-
-                                      builder: (_) =>
-                                          RecompensaFormScreen(
-                                              recompensa:
-                                                  recompensa),
-
-                                    ),
-
-                                  );
-
-                                  carregar();
-
-                                },
 
                               ),
 
-                              IconButton(
+                              title: Text(
 
-                                icon: const Icon(
-                                  Icons.delete,
+                                recompensa.nome,
+
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
                                 ),
 
-                                onPressed: () =>
-                                    excluir(recompensa),
+                              ),
 
-                              )
+                              subtitle: Column(
 
-                            ],
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
 
-                          ),
+                                children: [
 
-                        ),
+                                  if ((recompensa.descricao ?? "")
+                                      .isNotEmpty)
 
-                      );
+                                    Padding(
 
-                    },
+                                      padding:
+                                          const EdgeInsets.only(
+                                              top: 4),
 
-                  ),
+                                      child: Text(
+                                        recompensa.descricao!,
+                                      ),
 
-          )
+                                    ),
+
+                                  const SizedBox(height: 6),
+
+                                  Row(
+
+                                    children: [
+
+                                      const Icon(
+                                        Icons.stars,
+                                        size: 16,
+                                        color: Colors.amber,
+                                      ),
+
+                                      const SizedBox(width: 4),
+
+                                      Text(
+                                        "${recompensa.pontos} pontos",
+                                      ),
+
+                                    ],
+
+                                  ),
+
+                                  const SizedBox(height: 4),
+
+                                  Text(
+
+                                    recompensa.tipo ==
+                                            "FAMILIAR"
+                                        ? "👨‍👩‍👧 Familiar"
+                                        : "👤 Individual",
+
+                                  ),
+
+                                ],
+
+                              ),
+
+                              trailing: Column(
+
+                                mainAxisAlignment:
+                                    MainAxisAlignment.center,
+
+                                children: [
+
+                                  IconButton(
+                                              visualDensity: VisualDensity.compact,
+                                              constraints: const BoxConstraints(
+                                              minWidth: 36,
+                                              minHeight: 36,
+                                            ),
+                                    icon: const Icon(
+                                      Icons.edit,
+                                    ),
+
+                                    tooltip: "Editar",
+
+                                    onPressed: () {
+
+                                      abrirFormulario(
+                                        recompensa: recompensa,
+                                      );
+
+                                    },
+
+                                  ),
+
+                                  IconButton(
+                                              visualDensity: VisualDensity.compact,
+                                              constraints: const BoxConstraints(
+                                              minWidth: 36,
+                                              minHeight: 36,
+                                            ),
+
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                    ),
+
+                                    tooltip: "Excluir",
+
+                                    onPressed: () {
+
+                                      excluir(recompensa);
+
+                                    },
+
+                                  ),
+
+                                ],
+
+                              ),
+
+                            ),
+
+                          );
+
+                        },
+
+                      ),
+
+          ),
 
         ],
 

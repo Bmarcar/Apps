@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/administracao/admin/admin_page_scaffold.dart';
+import '../../core/widgets/administracao/admin/primary_save_button.dart';
 import '../../models/recompensa.dart';
 import '../../repositories/recompensa_repository.dart';
+
+import 'widgets/recompensa_informacoes_card.dart';
+import 'widgets/recompensa_pontuacao_card.dart';
+import 'widgets/recompensa_configuracoes_card.dart';
+import '../../core/theme/app_spacing.dart';
 
 class RecompensaFormScreen extends StatefulWidget {
   final Recompensa? recompensa;
@@ -26,13 +33,11 @@ class _RecompensaFormScreenState
   final _nomeController = TextEditingController();
   final _descricaoController = TextEditingController();
   final _pontosController = TextEditingController();
-  final _ordemController = TextEditingController();
 
   bool _ativa = true;
+  bool _salvando = false;
 
   String _tipo = "INDIVIDUAL";
-
-  bool _salvando = false;
 
   @override
   void initState() {
@@ -45,188 +50,134 @@ class _RecompensaFormScreenState
       _nomeController.text = r.nome;
       _descricaoController.text = r.descricao ?? "";
       _pontosController.text = r.pontos.toString();
-      _ordemController.text = r.ordem.toString();
 
       _tipo = r.tipo;
       _ativa = r.ativa;
     }
   }
 
+  @override
+  void dispose() {
+    _nomeController.dispose();
+    _descricaoController.dispose();
+    _pontosController.dispose();
+    super.dispose();
+  }
+
   Future<void> salvar() async {
 
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _salvando = true);
+    setState(() {
+      _salvando = true;
+    });
 
-    final recompensa = Recompensa(
+    try {
 
-      id: widget.recompensa?.id,
+      final recompensa = Recompensa(
 
-      nome: _nomeController.text,
+        id: widget.recompensa?.id,
 
-      descricao: _descricaoController.text,
+        nome: _nomeController.text.trim(),
 
-      pontos: int.parse(_pontosController.text),
+        descricao: _descricaoController.text.trim(),
 
-      tipo: _tipo,
+        pontos: int.parse(_pontosController.text),
 
-      ativa: _ativa,
+        tipo: _tipo,
 
-      ordem: int.tryParse(
-            _ordemController.text,
-          ) ??
-          0,
+        ativa: _ativa,
 
-    );
+        ordem: widget.recompensa?.ordem ?? 0,
 
-    if (widget.recompensa == null) {
+      );
 
-      await _repository.inserir(recompensa);
+      if (widget.recompensa == null) {
 
-    } else {
+        await _repository.inserir(recompensa);
 
-      await _repository.atualizar(recompensa);
+      } else {
+
+        await _repository.atualizar(recompensa);
+
+      }
+
+      if (!mounted) return;
+
+      Navigator.pop(context, true);
+
+    } catch (e) {
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+
+        SnackBar(
+
+          content: Text(
+            "Erro ao salvar recompensa.\n$e",
+          ),
+
+        ),
+
+      );
+
+    } finally {
+
+      if (mounted) {
+
+        setState(() {
+
+          _salvando = false;
+
+        });
+
+      }
 
     }
-
-    if (!mounted) return;
-
-    Navigator.pop(context);
 
   }
 
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    return AdminPageScaffold(
 
-      appBar: AppBar(
+      title: widget.recompensa == null
+          ? "Nova Recompensa"
+          : "Editar Recompensa",
 
-        title: Text(
-
-          widget.recompensa == null
-              ? "Nova Recompensa"
-              : "Editar Recompensa",
-
-        ),
-
-      ),
-
-      body: Form(
+      child: Form(
 
         key: _formKey,
 
         child: ListView(
 
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppSpacing.md),
 
           children: [
 
-            TextFormField(
+            RecompensaInformacoesCard(
 
-              controller: _nomeController,
+              nomeController: _nomeController,
 
-              decoration: const InputDecoration(
-
-                labelText: "Nome",
-
-              ),
-
-              validator: (v) {
-
-                if (v == null || v.isEmpty) {
-
-                  return "Informe o nome";
-
-                }
-
-                return null;
-
-              },
+              descricaoController: _descricaoController,
 
             ),
 
-            const SizedBox(height: 16),
+            RecompensaPontuacaoCard(
 
-            TextFormField(
+              pontosController: _pontosController,
 
-              controller: _descricaoController,
+              tipo: _tipo,
 
-              maxLines: 3,
+              onTipoChanged: (valor) {
 
-              decoration: const InputDecoration(
-
-                labelText: "Descrição",
-
-              ),
-
-            ),
-
-            const SizedBox(height: 16),
-
-            TextFormField(
-
-              controller: _pontosController,
-
-              keyboardType: TextInputType.number,
-
-              decoration: const InputDecoration(
-
-                labelText: "Pontos",
-
-              ),
-
-              validator: (v) {
-
-                if (v == null || v.isEmpty) {
-
-                  return "Informe os pontos";
-
-                }
-
-                return null;
-
-              },
-
-            ),
-
-            const SizedBox(height: 16),
-
-            DropdownButtonFormField<String>(
-
-              value: _tipo,
-
-              decoration: const InputDecoration(
-
-                labelText: "Tipo",
-
-              ),
-
-              items: const [
-
-                DropdownMenuItem(
-
-                  value: "INDIVIDUAL",
-
-                  child: Text("Individual"),
-
-                ),
-
-                DropdownMenuItem(
-
-                  value: "FAMILIAR",
-
-                  child: Text("Familiar"),
-
-                ),
-
-              ],
-
-              onChanged: (v) {
+                if (valor == null) return;
 
                 setState(() {
 
-                  _tipo = v!;
+                  _tipo = valor;
 
                 });
 
@@ -234,35 +185,15 @@ class _RecompensaFormScreenState
 
             ),
 
-            const SizedBox(height: 16),
+            RecompensaConfiguracoesCard(
 
-            TextFormField(
+              ativa: _ativa,
 
-              controller: _ordemController,
-
-              keyboardType: TextInputType.number,
-
-              decoration: const InputDecoration(
-
-                labelText: "Ordem",
-
-              ),
-
-            ),
-
-            const SizedBox(height: 16),
-
-            SwitchListTile(
-
-              title: const Text("Recompensa ativa"),
-
-              value: _ativa,
-
-              onChanged: (v) {
+              onChanged: (valor) {
 
                 setState(() {
 
-                  _ativa = v;
+                  _ativa = valor;
 
                 });
 
@@ -270,25 +201,18 @@ class _RecompensaFormScreenState
 
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 24),
 
-            FilledButton.icon(
-
-              onPressed: _salvando ? null : salvar,
-
-              icon: const Icon(Icons.save),
-
-              label: Text(
-
-                _salvando
-
-                    ? "Salvando..."
-
-                    : "Salvar",
-
-              ),
-
-            )
+            Padding(
+                    padding: const EdgeInsets.only(
+                      top: AppSpacing.lg,
+                      bottom: AppSpacing.lg,
+                    ),
+                    child: PrimarySaveButton(
+                      loading: _salvando,
+                      onPressed: salvar,
+                    ),
+                  ),
 
           ],
 
